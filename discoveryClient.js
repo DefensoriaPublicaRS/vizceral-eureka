@@ -5,8 +5,8 @@ var discoveryClient = function( myInfo,  config) {
         getApplications: function(){
             eurekaUrl = config.get('eureka.client.serviceUrl.defaultZone');
             console.log(eurekaUrl+  'apps');
-            return axios.get(eurekaUrl+  'apps', {headers: {'Content-type': 'application/json'}});
-            .then(response => { return response.data.applications.application});
+            return axios.get(eurekaUrl+  'apps', {headers: {'Content-type': 'application/json'}})
+                .then(response => { return response.data.applications.application});
         }
     }
 }
