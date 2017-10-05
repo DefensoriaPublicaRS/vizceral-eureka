@@ -6,6 +6,6 @@ WORKDIR /usr/src/app
 ARG NODE_ENV
 ENV NODE_ENV $NODE_ENV
 COPY . /usr/src/app
-RUN npm install
+RUN npm install --unsafe-perm
 
 CMD [ "npm", "start" ]
