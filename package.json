@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "./node_modules/nodemon/bin/nodemon.js application.js",
-    "run": "node application.js",
+    "watch": "node ./node_modules/nodemon/bin/nodemon.js application.js",
+    "start": "node application.js",
     "postinstall": "cd static && npm install"
   },
   "author": "",

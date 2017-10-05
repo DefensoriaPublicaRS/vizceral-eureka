@@ -7,6 +7,9 @@ $ PROFILES=producao node application.js
 
 navegar para localhost:8080
 
+## Desenvolvimento:
+
+Para facilitar o desenvolvimento, `npm run watch` poderá ser utilizado para reiniciar o servidor automaticamente quando um arquivo for alterado.
 
 ## Argumentos:
 
