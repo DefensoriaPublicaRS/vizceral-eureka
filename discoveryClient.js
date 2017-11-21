@@ -9,6 +9,6 @@ var discoveryClient = function( myInfo,  config) {
                 .then(response => { return response.data.applications.application});
         }
     }
-}
+};
 
 module.exports = discoveryClient;

@@ -1,18 +1,18 @@
 var express = require('express');
 var app = express();
-require('promise.prototype.finally').shim()
+require('promise.prototype.finally').shim();
 const cloudConfigClient = require("cloud-config-client");
 var configuration = require('./configuration').get();
-var discoveryClientFactory = require('./discoveryClient')
+var discoveryClientFactory = require('./discoveryClient');
 
 var metrics = require('./metrics');
 
-var _ = require('underscore')
+var _ = require('underscore');
 
-var applications = []
+var applications = [];
 
 var discoveryClient = null;
-console.log('Getting configuration for ' + configuration.application + ". Profiles: " + configuration.profiles)
+console.log('Getting configuration for ' + configuration.application + ". Profiles: " + configuration.profiles);
 cloudConfigClient.load(configuration).then(config => {
     discoveryClient = discoveryClientFactory(null,config)
     setInterval(getApplicationsList,60*1*1000)
@@ -20,11 +20,9 @@ cloudConfigClient.load(configuration).then(config => {
 })
 
 function getApplicationsList(){
-    discoveryClient.getApplications().then( apps => {
-        applications = apps;
-    }).catch(err => {
-        throw err
-    });
+    discoveryClient.getApplications()
+        .then( apps => { applications = apps })
+        .catch( err => { throw err });
 }
 
 
@@ -38,17 +36,15 @@ function getMetrics(apps,emit,done){
 
         _(app.instance).each(instance => {
             var addr = 'http://' + instance.ipAddr + ':'+ instance.port.$;
-            metrics.getSuccessFailureByService(addr).then(res => {
-                emit(res,app.name)
-
-            }).catch(err =>{})
-            .finally( function() {
-
-                count--;
-                if (count == 0){
-                    done();
-                }
-            })
+            metrics.getSuccessFailureByService(addr)
+                .then( res => { emit(res,app.name) })
+                .catch( err => {})
+                .finally( function() {
+                    count--;
+                    if (count === 0){
+                        done();
+                    }
+                })
         })
     })
 }
@@ -63,11 +59,11 @@ app.get("/graph", (req,response) => {
         }
         started = true;
         response.write('"' + name.toLowerCase() + '":');
-        response.write(JSON.stringify(res))
+        response.write(JSON.stringify(res));
     },
     function(){
-        console.log("done!")
-        response.write('}')
+        console.log("done!");
+        response.write('}');
         response.end();
     })
 })
