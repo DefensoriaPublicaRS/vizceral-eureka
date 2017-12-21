@@ -14,34 +14,41 @@ var applications = [];
 var discoveryClient = null;
 console.log('Getting configuration for ' + configuration.application + ". Profiles: " + configuration.profiles);
 cloudConfigClient.load(configuration).then(config => {
-    discoveryClient = discoveryClientFactory(null,config)
-    setInterval(getApplicationsList,60*1*1000)
+    discoveryClient = discoveryClientFactory(null, config)
+    setInterval(getApplicationsList, 60 * 1 * 1000)
     getApplicationsList();
 })
 
-function getApplicationsList(){
+function getApplicationsList() {
     discoveryClient.getApplications()
-        .then( apps => { applications = apps })
-        .catch( err => { throw err });
+        .then(apps => {
+            applications = apps
+        })
+        .catch(err => {
+            throw err
+        });
 }
 
 
-function getMetrics(apps,emit,done){
+function getMetrics(apps, emit, done) {
 
     var count = _(apps).reduce((sum, app) => {
         return app.instance.length + sum;
     }, 0);
-    console.log("Getting metrings for " +count+" instances");
+    console.log("Getting metrings for " + count + " instances");
     _(apps).each(app => {
 
         _(app.instance).each(instance => {
-            var addr = 'http://' + instance.ipAddr + ':'+ instance.port.$;
+            var addr = 'http://' + instance.ipAddr + ':' + instance.port.$;
             metrics.getSuccessFailureByService(addr)
-                .then( res => { emit(res,app.name) })
-                .catch( err => {})
-                .finally( function() {
+                .then(res => {
+                    emit(res, app.name.toLowerCase())
+                })
+                .catch(err => {
+                })
+                .finally(function() {
                     count--;
-                    if (count === 0){
+                    if(count === 0) {
                         done();
                     }
                 })
@@ -49,25 +56,41 @@ function getMetrics(apps,emit,done){
     })
 }
 
-
-app.get("/graph", (req,response) => {
-    response.write('{ ')
-    var started = false;
-    getMetrics(applications,(res,name) => {
-        if (started){
-            response.write(',');
+function mergeObjects(obj1, obj2) {
+    _(Object.keys(obj1)).each(key => {
+        if(obj2[key] !== undefined && typeof obj2[key] !== "object") {
+            obj1[key] += obj2[key];
+        } else if(typeof obj2[key] === "object") {
+            mergeObjects(obj1[key], obj2[key])
         }
-        started = true;
-        response.write('"' + name.toLowerCase() + '":');
-        response.write(JSON.stringify(res));
-    },
-    function(){
-        console.log("done!");
-        response.write('}');
-        response.end();
-    })
-})
+    });
 
+    _(Object.keys(obj2)).each(key => {
+        if(obj1[key] === undefined) {
+            obj1[key] = obj2[key];
+        }
+    });
+    return obj1;
+}
+
+app.get("/graph", (req, response) => {
+    var servicos = {};
+
+    getMetrics(applications, (res, name) => {
+
+            if(servicos[name] === undefined) {
+                servicos[name] = res;
+            } else {
+                mergeObjects(servicos[name], res);
+            }
+
+        },
+        function() {
+            console.log("done!");
+            response.write(JSON.stringify(servicos));
+            response.end();
+        })
+});
 
 
 app.use(express.static('static'));
