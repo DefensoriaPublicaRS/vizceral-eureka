@@ -3,13 +3,16 @@ function run() {
     viz.setView();
     viz.animate();
 
-    function updateData(){
-        fetch('/graph').then(function(res){
-            res.json().then(function(data){
-                viz.updateData(convertToVizceral(data))
+    function updateData() {
+        fetch('/graph')
+            .then(function(res) {
+                res.json().then(function(data) {
+                    viz.updateData(convertToVizceral(data))
+                });
+            })
+            .then(function() {
+                setTimeout(updateData, 5000)
             });
-        });
-        setTimeout(updateData,5000)
     }
 
     updateData();
