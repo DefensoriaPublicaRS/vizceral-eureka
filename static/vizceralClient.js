@@ -51,8 +51,6 @@ function convertToVizceral(rawData) {
         name: 'INTERNET'
     });
 
-    console.log(data);
-
     _(rawData).each(function(value, key) {
         _(value.targets).each(function(targetValue, targetKey) {
             var connections = {

@@ -39,7 +39,7 @@ function getMetrics(apps, emit, done) {
     _(apps).each(app => {
 
         _(app.instance).each(instance => {
-            var addr = 'http://' + instance.ipAddr + ':' + instance.port.$;
+            let addr = 'http://' + instance.ipAddr + ':' + instance.port.$;
             metrics.getSuccessFailureByService(addr)
                 .then(res => {
                     emit(res, app.name.toLowerCase(), instance.instanceId)
@@ -74,7 +74,7 @@ function mergeObjects(obj1, obj2) {
 }
 
 app.get("/graph", (req, response) => {
-    var servicos = {};
+    let servicos = {};
 
     getMetrics(applications, (res, name, instanceId) => {
 
