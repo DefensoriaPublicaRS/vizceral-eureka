@@ -42,7 +42,7 @@ function getMetrics(apps, emit, done) {
             var addr = 'http://' + instance.ipAddr + ':' + instance.port.$;
             metrics.getSuccessFailureByService(addr)
                 .then(res => {
-                    emit(res, app.name.toLowerCase())
+                    emit(res, app.name.toLowerCase(), instance.instanceId)
                 })
                 .catch(err => {
                 })
@@ -76,13 +76,22 @@ function mergeObjects(obj1, obj2) {
 app.get("/graph", (req, response) => {
     var servicos = {};
 
-    getMetrics(applications, (res, name) => {
+    getMetrics(applications, (res, name, instanceId) => {
 
             if(servicos[name] === undefined) {
                 servicos[name] = res;
             } else {
                 mergeObjects(servicos[name], res);
             }
+
+            if(servicos[name].instancias === undefined) {
+                servicos[name].instancias = {}
+            }
+
+            servicos[name].instancias[instanceId] = {
+                requestcount: res.requestcount,
+                errorcount: res.errorcount
+            };
 
         },
         function() {
