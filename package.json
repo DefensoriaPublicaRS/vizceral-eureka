@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "node ./node_modules/nodemon/bin/nodemon.js application.js",
     "start": "node application.js",
-    "postinstall": "cd static && npm install"
+    "build": "cd webapp && npm run build",
+    "postinstall": "cd webapp && npm install"
   },
   "author": "",
   "license": "ISC",

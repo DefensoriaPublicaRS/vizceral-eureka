@@ -57,6 +57,7 @@ function getApplicationsList() {
             applications = apps
         })
         .catch(err => {
+            console.error(err);
             throw err
         });
 }
