@@ -3,6 +3,7 @@ const cloudConfigClient = require("cloud-config-client");
 let configuration = require('../configuration').get();
 let discoveryClientFactory = require('./discoveryClient');
 var metrics = require('./metrics');
+var convertToVizceral = require('./vizceralConverter');
 
 var _ = require('underscore');
 
@@ -81,7 +82,7 @@ function getMetrics(apps, emit) {
                 .finally(function() {
                     count--;
                     if(count === 0) {
-                        vizceralCache.set(servicos);
+                        vizceralCache.set(convertToVizceral.convert(servicos));
                         console.log("done!");
                     }
                 })
