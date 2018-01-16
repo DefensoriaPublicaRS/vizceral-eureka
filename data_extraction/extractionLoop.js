@@ -4,6 +4,7 @@ let configuration = require('../configuration').get();
 let discoveryClientFactory = require('./discoveryClient');
 var metrics = require('./metrics');
 var convertToVizceral = require('./vizceralConverter');
+var mutex = require('./mutex');
 
 var _ = require('underscore');
 
@@ -20,14 +21,22 @@ cloudConfigClient.load(configuration).then(config => {
 });
 
 function startLoop() {
-    updateMetrics();
+    if(applications.length > 0) {
+        if(!mutex.isLocked()) {
+            mutex.lock();
+            updateMetrics();
+        } else {
+            console.log("Semaphore is closed.")
+        }
+    }else{
+        console.log("No applications retrieved from eureka to be processed.")
+    }
     setTimeout(startLoop, 8000);
 }
 
 function updateMetrics() {
 
     servicos = {};
-
     getMetrics(applications, (res, name, instanceId) => {
 
         if(servicos[name] === undefined) {
@@ -84,6 +93,7 @@ function getMetrics(apps, emit) {
                     count--;
                     if(count === 0) {
                         vizceralCache.set(convertToVizceral.convert(servicos));
+                        mutex.unlock();
                         console.log("done!");
                     }
                 })
