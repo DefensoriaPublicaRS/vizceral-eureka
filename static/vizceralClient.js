@@ -4,7 +4,7 @@ function run() {
     viz.animate();
 
     function updateData() {
-        fetch('/graph')
+        fetch('/data')
             .then(function(res) {
                 res.json().then(function(data) {
                     viz.updateData(convertToVizceral(data))
