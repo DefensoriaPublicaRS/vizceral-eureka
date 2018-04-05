@@ -10,7 +10,7 @@
     "build": "cd webapp && npm run build",
     "postinstall": "git submodule update --init && cd webapp && npm install"
   },
-  "author": "",
+  "author": "Defensoria Pública do Estado do Rio Grande do Sul",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.16.2",
