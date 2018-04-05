@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "node ./node_modules/nodemon/bin/nodemon.js application.js",
     "start": "node application.js",
-    "postinstall": "cd static && npm install"
+    "build": "cd webapp && npm run build",
+    "postinstall": "git submodule update --init && cd webapp && npm install"
   },
   "author": "",
   "license": "ISC",
@@ -20,6 +21,7 @@
     "underscore": "^1.8.3"
   },
   "devDependencies": {
-    "nodemon": "^1.12.1"
+    "nodemon": "^1.12.1",
+    "npx": "^10.0.1"
   }
 }

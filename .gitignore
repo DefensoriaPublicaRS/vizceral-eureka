@@ -1,3 +1,21 @@
-node_modules
-.idea
+# System
+.DS_Store
+
+# IDE config
+/.idea
+
+# Generated
+dist/
+webapp/dist/**
+/.jshintignore
+/.jshintrc
 npm-debug.log
+node_modules
+
+# Typings
+*.ts
+
+# Temporary Files and Backups
+*.swp
+*.*~
+package-lock.json
