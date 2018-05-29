@@ -1,26 +1,18 @@
 var vizceralCache = require('../vizceralCache.js');
-const cloudConfigClient = require("cloud-config-client");
-let configuration = require('../configuration').get();
-let discoveryClientFactory = require('./discoveryClient');
+let discoveryClient = require('./discoveryClient');
 var metrics = require('./metrics');
 var convertToVizceral = require('./vizceralConverter');
 var mutex = require('./mutex');
 
 var _ = require('underscore');
 
-var applications = [];
+let applications = [];
 var servicos = {};
 
-var discoveryClient = null;
-
-console.log('Getting configuration for ' + configuration.application + ". Profiles: " + configuration.profiles);
-cloudConfigClient.load(configuration).then(config => {
-    discoveryClient = discoveryClientFactory(null, config);
-    setInterval(getApplicationsList, 60 * 1000);
-    getApplicationsList();
-});
-
 function startLoop() {
+
+    applications = discoveryClient.getApplicationList();
+
     if(applications.length > 0) {
         if(!mutex.isLocked()) {
             mutex.lock();
@@ -37,6 +29,7 @@ function startLoop() {
 function updateMetrics() {
 
     servicos = {};
+
     getMetrics(applications, (res, name, instanceId) => {
 
         if(servicos[name] === undefined) {
@@ -55,20 +48,6 @@ function updateMetrics() {
         };
 
     })
-
-
-}
-
-function getApplicationsList() {
-    console.log("Updating application list");
-    discoveryClient.getApplications()
-        .then(apps => {
-            applications = apps
-        })
-        .catch(err => {
-            console.error(err);
-            throw err
-        });
 }
 
 function getMetrics(apps, emit) {
