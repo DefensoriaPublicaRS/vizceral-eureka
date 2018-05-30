@@ -15,7 +15,8 @@ module.exports = {
             publicIp: publicIp,
             vizceral: {
                 infoAtRequestCount: 50,
-                alertAtRequestCount: 100
+                alertAtRequestCount: 100,
+                entryNodes: ['portal-defensoria-gateway', 'portal-defensoria']
             }
         };
     }
