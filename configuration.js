@@ -14,11 +14,6 @@ module.exports = {
             serverPort: serverPort,
             publicIp: publicIp,
             vizceral: {
-                severity: {
-                    info: 0,
-                    alert: 1,
-                    danger: 2
-                },
                 infoAtRequestCount: 50,
                 alertAtRequestCount: 100
             }

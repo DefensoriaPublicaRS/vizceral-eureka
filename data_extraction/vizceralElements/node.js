@@ -1,15 +1,16 @@
 class Node {
-    constructor(name, displayName, notices, metadata) {
-        this.name = name;
+    constructor(name, displayName) {
+        this.name = name.toLowerCase();
         this.instances = 1;
-        this.displayName = displayName;
-        this.notices = notices || [];
+        this.displayName = displayName.toLowerCase();
+        this.notices = [];
         this.class = 'normal';
-        this.metadata = metadata || [];
+        this.metadata = [];
 
         this.addNewInstance = function (node) {
             this.instances += node.instances;
-            this.notices = this.notices.concat(node.instances);
+            this.displayName = "(" + this.instances + ")" + node.displayName;
+            this.notices = this.notices.concat(node.notices);
             this.metadata = this.metadata.concat(node.metadata);
         }
     }

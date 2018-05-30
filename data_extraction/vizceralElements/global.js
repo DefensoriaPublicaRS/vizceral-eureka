@@ -7,9 +7,9 @@ class Global extends NodeStore{
         this.renderer = 'global';
         this.name = 'edge';
         this.maxVolume = 100000;
-        this.entryNome = 'INTERNET';
+        this.entryNode = 'internet';
 
-        this.addNode(new Region(this.entryNome, null));
+        this.addNode(new Region(this.entryNode, null));
     }
 }
 

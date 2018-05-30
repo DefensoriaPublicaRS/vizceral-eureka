@@ -4,7 +4,7 @@ class Region extends NodeStore{
     constructor(name, updated) {
         super();
         this.renderer = 'region';
-        this.name = name;
+        this.name = name.toLowerCase();
         this.maxVolume = 10000;
         this.updated = updated;
     }
