@@ -16,7 +16,7 @@ module.exports = {
             vizceral: {
                 infoAtRequestCount: 50,
                 alertAtRequestCount: 100,
-                globalEntry: 'internet',
+                globalEntry: 'data-center',
                 regionEntry: ['portal-defensoria-gateway', 'portal-defensoria'],
                 regions: [
                     {
@@ -24,7 +24,7 @@ module.exports = {
                         matcher: ip => { return ip === '10.244.168.102' }
                     },
                     {
-                        name: 'cluster',
+                        name: 'jvm',
                         matcher: ip => { return ip !== '10.244.168.102' }
                     }
                 ]

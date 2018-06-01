@@ -16,6 +16,22 @@ class Region extends NodeStore {
                 this.addConnection('internet', entyNode, 0, 0, 0, null);
             });
         }
+
+        this.merge = function (region) {
+            region.nodes.forEach(node => {
+                this.addNode(node);
+            });
+            region.connections.forEach(connection => {
+                this.addConnection(
+                    connection.source,
+                    connection.target,
+                    connection.metrics.normal,
+                    connection.metrics.warning,
+                    connection.metrics.danger,
+                    connection.metadata
+                )
+            })
+        }
     }
 }
 

@@ -57,6 +57,7 @@ function updateData() {
                 let counter = region.countRequests();
                 console.log(region.name, counter);
                 global.addConnection(global.entryNode, region.name, counter.normal, counter.warning, counter.danger, null);
+                global.nodes[0].merge(region);
             }
         });
 
