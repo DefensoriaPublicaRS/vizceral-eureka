@@ -16,13 +16,27 @@ class Connection {
         } else {
             let totalRequest = normal + warning;
 
-            if (totalRequest >= config.vizceral.infoAtRequestCount) {
-                this.notices.push(new Notice('Total requests: ' + totalRequest, null, Severity.info));
-            } else if (totalRequest >= config.vizceral.alertAtRequestCount) {
+            if (totalRequest >= config.vizceral.alertAtRequestCount) {
                 this.notices.push(new Notice('Total requests: ' + totalRequest, null, Severity.alert));
+            } else if (totalRequest >= config.vizceral.infoAtRequestCount) {
+                this.notices.push(new Notice('Total requests: ' + totalRequest, null, Severity.info));
             }
         }
 
+        this.copy = function () {
+            let connection = new Connection(
+                this.source,
+                this.target,
+                this.metrics.normal,
+                this.metrics.warning,
+                this.metrics.danger,
+                null, null);
+
+            this.notices.forEach(notice => {
+                connection.notices.push(notice.copy());
+            });
+            return connection;
+        }
     }
 }
 

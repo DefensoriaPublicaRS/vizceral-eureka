@@ -12,6 +12,14 @@ class Node {
             this.displayName = "(" + this.instances + ")" + node.displayName;
             this.notices = this.notices.concat(node.notices);
             this.metadata = this.metadata.concat(node.metadata);
+        };
+
+        this.copy = function () {
+            let node = new Node(this.name, this.displayName)
+            this.notices.forEach(notice => {
+                node.notices.push(notice.copy())
+            });
+            return node;
         }
     }
 }

@@ -20,10 +20,10 @@ class Region extends NodeStore {
 
         this.merge = function (region) {
             region.nodes.forEach(node => {
-                this.addNode(node);
+                this.addNode(node.copy());
             });
             region.connections.forEach(connection => {
-                this.addConnection(connection);
+                this.addConnection(connection.copy());
             })
         }
     }
