@@ -1,3 +1,4 @@
+const config = require('../configuration').get();
 let vizceralCache = require('../vizceralCache.js');
 let discoveryClient = require('./discoveryClient');
 let metrics = require('./metrics');
@@ -30,23 +31,35 @@ function startLoop() {
 function updateData() {
 
     global = new Global();
-    let regionCluster = new Region('Cluster', Date.now());
-    let regionSwarm = new Region('Swarm', Date.now());
-
-    global.addNode(regionCluster);
-    global.addNode(regionSwarm);
-
-    global.addConnection(global.entryNode, regionCluster.name, 100, 50, 100, null);
 
     let promises = [];
 
-    applications.forEach(servico => {
-        servico.instance.forEach(instancia => {
-            promises.push(metrics.getMetricsAsNode(instancia, regionCluster));
-        })
+    console.log("Updating applications metrics.");
+
+    config.vizceral.regions.forEach(regionConfig => {
+        let region = new Region(regionConfig.name, Date.now());
+        global.addNode(region);
+
+        applications.forEach(servico => {
+            servico.instance.forEach(instancia => {
+                if (regionConfig.matcher(instancia.ipAddr)) {
+                    promises.push(metrics.getMetricsAsNode(instancia, region));
+                }
+            });
+        });
+
     });
 
     Promise.all(promises).then(x => {
+
+        global.nodes.forEach(region => {
+            if(region.name !== global.entryNode){
+                let counter = region.countRequests();
+                console.log(region.name, counter);
+                global.addConnection(global.entryNode, region.name, counter.normal, counter.warning, counter.danger, null);
+            }
+        });
+
         mutex.unlock();
         vizceralCache.set(global);
     })

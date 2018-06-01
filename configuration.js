@@ -16,7 +16,18 @@ module.exports = {
             vizceral: {
                 infoAtRequestCount: 50,
                 alertAtRequestCount: 100,
-                entryNodes: ['portal-defensoria-gateway', 'portal-defensoria']
+                globalEntry: 'internet',
+                regionEntry: ['portal-defensoria-gateway', 'portal-defensoria'],
+                regions: [
+                    {
+                        name: 'swarm',
+                        matcher: ip => { return ip === '10.244.168.102' }
+                    },
+                    {
+                        name: 'cluster',
+                        matcher: ip => { return ip !== '10.244.168.102' }
+                    }
+                ]
             }
         };
     }

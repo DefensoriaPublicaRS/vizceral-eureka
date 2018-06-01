@@ -10,10 +10,12 @@ class Region extends NodeStore {
         this.maxVolume = 10000;
         this.updated = updated;
 
-        this.addNode(new Node('internet', 'internet'));
-        config.vizceral.entryNodes.forEach(entyNode => {
-            this.addConnection('internet', entyNode, 0, 0, 0, null);
-        });
+        if (this.name !== config.vizceral.globalEntry) {
+            this.addNode(new Node('internet', 'internet'));
+            config.vizceral.regionEntry.forEach(entyNode => {
+                this.addConnection('internet', entyNode, 0, 0, 0, null);
+            });
+        }
     }
 }
 

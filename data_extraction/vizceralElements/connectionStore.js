@@ -25,6 +25,16 @@ class ConnectionStore {
 
             let connection = new Connection(source, target, normal, warning, danger, notices, metadata);
             this.connections.push(connection);
+        };
+
+        this.countRequests = function () {
+            let counter = {normal: 0, warning: 0, danger: 0};
+            this.connections.forEach(connection => {
+                counter.normal += connection.metrics.normal;
+                counter.warning += connection.metrics.warning;
+                counter.danger += connection.metrics.danger;
+            });
+            return counter;
         }
     }
 }
