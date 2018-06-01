@@ -38,7 +38,7 @@ function updateData() {
     console.log("Updating applications metrics.");
 
     config.vizceral.regions.forEach(regionConfig => {
-        let region = new Region(regionConfig.name, Date.now());
+        let region = new Region(regionConfig.name);
         global.addNode(region);
 
         applications.forEach(servico => {

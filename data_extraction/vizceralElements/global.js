@@ -10,7 +10,7 @@ class Global extends NodeStore{
         this.maxVolume = 100000;
         this.entryNode = config.vizceral.globalEntry;
 
-        this.addNode(new Region(this.entryNode, null));
+        this.addNode(new Region(this.entryNode));
     }
 }
 

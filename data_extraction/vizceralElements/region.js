@@ -4,12 +4,12 @@ let Node = require('./node');
 let Connection = require('./connection');
 
 class Region extends NodeStore {
-    constructor(name, updated) {
+    constructor(name) {
         super();
         this.renderer = 'region';
         this.name = name.toLowerCase();
         this.maxVolume = 10000;
-        this.updated = updated;
+        this.updated = Date.now();
 
         if (this.name !== config.vizceral.globalEntry) {
             this.addNode(new Node('internet', 'internet'));
