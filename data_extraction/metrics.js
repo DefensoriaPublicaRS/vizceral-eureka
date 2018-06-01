@@ -50,18 +50,26 @@ let metrics = {
                 let node = new Node(instance.app, instance.app);
                 region.addNode(node);
 
-                Object.keys(aggregate.targets).forEach(item => {
-                    let error = aggregate.targets[item].errorcount;
-                    let request = aggregate.targets[item].requestcount;
-                    let sucess = request-error;
-                    region.addConnection(instance.app, item, sucess, 0, error, null);
-                })
+                Object.keys(aggregate.targets).forEach(service => {
+                    let error = aggregate.targets[service].errorcount;
+                    let request = aggregate.targets[service].requestcount;
+                    let sucess = request - error;
+                    region.addConnection(instance.app, service, sucess, 0, error, null);
 
-                console.log("Resolveu: ", instance.app);
+                    if (error) {
+                        Object.keys(aggregate.targets[service]).forEach(method => {
+                            let methodErrors = aggregate.targets[service][method].errorcount;
+                            if (methodErrors > 0) {
+                                const message = methodErrors+" errors with [" + service + "] => " + method;
+                                node.notices.push(new Notice(message, null, Severity.danger));
+                            }
+                        })
+                    }
+                });
 
             })
             .catch(error => {
-                let message = "Error trying to get metrics: "+error.message;
+                let message = "Error trying to get metrics: " + error.message;
                 let node = new Node(instance.app, instance.app);
                 node.notices.push(new Notice(message, null, Severity.alert));
                 region.addNode(node);

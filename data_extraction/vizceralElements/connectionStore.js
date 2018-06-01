@@ -12,7 +12,7 @@ class ConnectionStore {
 
             if (danger > 0) {
                 notices.push(new Notice('Sucess: ' + normal, null, Severity.danger));
-                notices.push(new Notice('Erros: ' + danger, null, Severity.danger));
+                notices.push(new Notice('Errors: ' + danger, null, Severity.danger));
             } else {
                 let totalRequest = normal + warning;
 
