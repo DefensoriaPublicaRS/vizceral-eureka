@@ -7,6 +7,7 @@ let _ = require('underscore');
 
 let Global = require('./vizceralElements/global');
 let Region = require('./vizceralElements/region');
+let Connection = require('./vizceralElements/connection');
 
 let applications = [];
 let global = {};
@@ -53,10 +54,10 @@ function updateData() {
     Promise.all(promises).then(x => {
 
         global.nodes.forEach(region => {
-            if(region.name !== global.entryNode){
+            if (region.name !== global.entryNode) {
                 let counter = region.countRequests();
                 console.log(region.name, counter);
-                global.addConnection(global.entryNode, region.name, counter.normal, counter.warning, counter.danger, null);
+                global.addConnection(new Connection(global.entryNode, region.name, counter.normal, counter.warning, counter.danger, null, null));
                 global.nodes[0].merge(region);
             }
         });

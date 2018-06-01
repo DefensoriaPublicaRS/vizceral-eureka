@@ -1,6 +1,7 @@
 const config = require('../../configuration').get();
 let NodeStore = require('./nodeStore');
 let Node = require('./node');
+let Connection = require('./connection');
 
 class Region extends NodeStore {
     constructor(name, updated) {
@@ -13,7 +14,7 @@ class Region extends NodeStore {
         if (this.name !== config.vizceral.globalEntry) {
             this.addNode(new Node('internet', 'internet'));
             config.vizceral.regionEntry.forEach(entyNode => {
-                this.addConnection('internet', entyNode, 0, 0, 0, null);
+                this.addConnection(new Connection('internet', entyNode, 0, 0, 0, null, null));
             });
         }
 
@@ -22,14 +23,7 @@ class Region extends NodeStore {
                 this.addNode(node);
             });
             region.connections.forEach(connection => {
-                this.addConnection(
-                    connection.source,
-                    connection.target,
-                    connection.metrics.normal,
-                    connection.metrics.warning,
-                    connection.metrics.danger,
-                    connection.metadata
-                )
+                this.addConnection(connection);
             })
         }
     }

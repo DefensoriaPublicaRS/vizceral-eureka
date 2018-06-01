@@ -1,30 +1,24 @@
-const config = require('../../configuration').get();
-const Connection = require('./connection');
-const Notice = require('./notice');
-const Severity = require("./severity");
+let _ = require('underscore');
 
 class ConnectionStore {
     constructor() {
         this.connections = [];
-        this.addConnection = function (source, target, normal, warning, danger, metadata) {
-
-            let notices = [];
-
-            if (danger > 0) {
-                notices.push(new Notice('Sucess: ' + normal, null, Severity.danger));
-                notices.push(new Notice('Errors: ' + danger, null, Severity.danger));
+        this.addConnection = function (connection) {
+            let existingConnection = this.getConnection(connection.source, connection.target);
+            if (existingConnection) {
+                existingConnection.metrics.normal += connection.metrics.normal;
+                existingConnection.metrics.warning += connection.metrics.warning;
+                existingConnection.metrics.danger += connection.metrics.danger;
+                existingConnection.notices.concat(connection.notices);
             } else {
-                let totalRequest = normal + warning;
-
-                if (totalRequest >= config.vizceral.infoAtRequestCount) {
-                    notices.push(new Notice('Total requests: ' + totalRequest, null, Severity.info));
-                } else if (totalRequest >= config.vizceral.alertAtRequestCount) {
-                    notices.push(new Notice('Total requests: ' + totalRequest, null, Severity.alert));
-                }
+                this.connections.push(connection);
             }
+        };
 
-            let connection = new Connection(source, target, normal, warning, danger, notices, metadata);
-            this.connections.push(connection);
+        this.getConnection = function (source, target) {
+            _.find(this.connections, item => {
+                return item.source === source && item.target === target;
+            })
         };
 
         this.countRequests = function () {

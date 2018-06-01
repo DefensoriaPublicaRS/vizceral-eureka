@@ -1,5 +1,6 @@
 const axios = require("axios");
 const Node = require("./vizceralElements/node");
+const Connection = require("./vizceralElements/connection");
 const Notice = require("./vizceralElements/notice");
 const Severity = require("./vizceralElements/severity");
 let _ = require('underscore');
@@ -54,19 +55,19 @@ let metrics = {
                     let error = aggregate.targets[service].errorcount;
                     let request = aggregate.targets[service].requestcount;
                     let sucess = request - error;
-                    region.addConnection(instance.app, service, sucess, 0, error, null);
+
+                    region.addConnection(new Connection(instance.app, service, sucess, 0, error, null, null));
 
                     if (error) {
                         Object.keys(aggregate.targets[service]).forEach(method => {
                             let methodErrors = aggregate.targets[service][method].errorcount;
                             if (methodErrors > 0) {
-                                const message = methodErrors+" errors with [" + service + "] => " + method;
+                                const message = methodErrors + " errors with [" + service + "] => " + method;
                                 node.notices.push(new Notice(message, null, Severity.danger));
                             }
                         })
                     }
                 });
-
             })
             .catch(error => {
                 let message = "Error trying to get metrics: " + error.message;
