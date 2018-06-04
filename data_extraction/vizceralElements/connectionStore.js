@@ -6,19 +6,23 @@ class ConnectionStore {
         this.addConnection = function (connection) {
             let existingConnection = this.getConnection(connection.source, connection.target);
             if (existingConnection) {
+
+                this.connections.splice(this.connections.indexOf(existingConnection),1);
+
                 existingConnection.metrics.normal += connection.metrics.normal;
                 existingConnection.metrics.warning += connection.metrics.warning;
                 existingConnection.metrics.danger += connection.metrics.danger;
-                existingConnection.notices.concat(connection.notices);
+                existingConnection.notices = existingConnection.notices.concat(connection.notices);
+
+                this.connections.push(existingConnection.copy());
+
             } else {
                 this.connections.push(connection);
             }
         };
 
         this.getConnection = function (source, target) {
-            _.find(this.connections, item => {
-                return item.source === source && item.target === target;
-            })
+            return _.findWhere(this.connections, {source: source, target: target});
         };
 
         this.countRequests = function () {

@@ -24,7 +24,7 @@ class Region extends NodeStore {
             });
             region.connections.forEach(connection => {
                 this.addConnection(connection.copy());
-            })
+            });
         }
     }
 }
