@@ -5,9 +5,12 @@ let metrics = require('./metrics');
 let mutex = require('./mutex');
 let _ = require('underscore');
 
-let Global = require('./vizceralElements/global');
-let Region = require('./vizceralElements/region');
-let Connection = require('./vizceralElements/connection');
+const Global = require('./vizceralElements/global');
+const Region = require('./vizceralElements/region');
+const Connection = require('./vizceralElements/connection');
+const Node = require("./vizceralElements/node");
+const Notice = require("./vizceralElements/notice");
+const Severity = require("./vizceralElements/severity");
 
 let applications = [];
 let global = {};
@@ -43,8 +46,40 @@ function updateData() {
 
         applications.forEach(servico => {
             servico.instance.forEach(instancia => {
+
                 if (regionConfig.matcher(instancia.ipAddr)) {
-                    promises.push(metrics.getMetricsAsNode(instancia, region));
+
+                    let node = new Node(instancia.app, instancia.app);
+                    region.addNode(node);
+
+                    promises.push(
+                        metrics.getMetricsAsNode(instancia, region).then(hystrixService => {
+
+                            if(!hystrixService.targets.length){
+                                node.notices.push(new Notice("Couldn't find any hystrix metric for this service", null, Severity.info, null));
+                            }
+
+                            hystrixService.targets.forEach(target => {
+
+                                region.addConnection(new Connection(
+                                    instancia.app,
+                                    target.name,
+                                    target.requestCount - target.errorCount,
+                                    0,
+                                    target.errorCount,
+                                    null, null));
+
+                                target.methods.forEach(method => {
+                                    if (method.errorCount > 0) {
+                                        const message = method.errorCount + " errors with [" + target.name + "] => " + method.method;
+                                        node.notices.push(new Notice(message, null, Severity.danger, null));
+                                    }
+                                });
+                            })
+                        }).catch(error => {
+                            node.notices.push(new Notice(error, null, Severity.alert, null));
+                        })
+                    );
                 }
             });
         });
