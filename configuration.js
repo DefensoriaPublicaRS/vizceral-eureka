@@ -16,6 +16,7 @@ module.exports = {
             vizceral: {
                 infoAtRequestCount: 50,
                 alertAtRequestCount: 100,
+                alertAtLatency: 2000,
                 globalEntry: 'data-center',
                 regionEntry: ['portal-defensoria-gateway', 'portal-defensoria'],
                 regions: [

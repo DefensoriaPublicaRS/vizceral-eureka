@@ -55,7 +55,7 @@ function updateData() {
                     promises.push(
                         metrics.getMetricsAsNode(instancia, region).then(hystrixService => {
 
-                            if(!hystrixService.targets.length){
+                            if (!hystrixService.targets.length) {
                                 node.notices.push(new Notice("Couldn't find any hystrix metric for this service", null, Severity.info, null));
                             }
 
@@ -69,10 +69,17 @@ function updateData() {
                                     target.errorCount,
                                     null, null));
 
+
                                 target.methods.forEach(method => {
                                     if (method.errorCount > 0) {
                                         const message = method.errorCount + " errors with [" + target.name + "] => " + method.method;
                                         node.notices.push(new Notice(message, null, Severity.danger, null));
+                                    } else {
+                                        if (method.latency >= config.vizceral.alertAtLatency) {
+                                            let latency = parseFloat((method.latency / 1000).toString()).toFixed(2);
+                                            const latencyMessage = "[" + latency + "] seconds in " + target.name + '.' + method.method + " latency.";
+                                            node.notices.push(new Notice(latencyMessage, null, Severity.danger, null));
+                                        }
                                     }
                                 });
                             })
