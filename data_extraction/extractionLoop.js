@@ -78,7 +78,7 @@ function updateData() {
                                         if (method.latency >= config.vizceral.alertAtLatency) {
                                             let latency = parseFloat((method.latency / 1000).toString()).toFixed(2);
                                             const latencyMessage = "[" + latency + "] seconds in " + target.name + '.' + method.method + " latency.";
-                                            node.notices.push(new Notice(latencyMessage, null, Severity.danger, null));
+                                            node.notices.push(new Notice(latencyMessage, null, Severity.alert, null));
                                         }
                                     }
                                 });
